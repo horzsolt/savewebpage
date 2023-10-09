@@ -1,0 +1,30 @@
+{
+    "manifest_version": 2,
+    "name": "URL sender",
+    "version": "1.0",
+  
+    "description": "Send the active tab's URL to a specified endpoint.",
+    "icons": {
+      "48": "urlsender_icon.png"
+    },
+  
+    "permissions": [
+      "activeTab",
+      "tabs",
+      "<all_urls>"      
+    ],
+
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "horzsolturlsender@example.com",
+        "strict_min_version": "42.0"
+      }
+    },
+    
+    "browser_action": {
+      "default_icon": "urlsender_icon_32.png",
+      "default_title": "Send URL",
+      "default_popup": "popup/sendurl.html"
+    }
+  }
+  
