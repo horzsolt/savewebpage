@@ -1,3 +1,9 @@
+*.sock
+config.ini
+
+# Vscode
+.vscode/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -124,6 +130,7 @@ celerybeat.pid
 .venv
 env/
 venv/
+myprojectenv/
 ENV/
 env.bak/
 venv.bak/
