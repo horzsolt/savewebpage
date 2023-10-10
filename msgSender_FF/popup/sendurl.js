@@ -17,7 +17,6 @@ function listenForClicks() {
             .then(tabs => {
                 let currentTab = tabs[0];
                 console.log(currentTab.url);
-                //sendMessage(currentTab.url);
                 browser.tabs.sendMessage(tabs[0].id, {
                     command: "sendurl",
                     content: currentTab.url
@@ -35,14 +34,6 @@ function reportExecuteScriptError(error) {
   
 const inline = `
     (() => {
-
-        console.log("starting....");
-
-        if (window.hasRun) {
-        return;
-        }
-        window.hasRun = true;
-    
         function sendurl(url) {
             let xmlhttp = new XMLHttpRequest();
             xmlhttp.open("POST", "http://192.168.0.21");
