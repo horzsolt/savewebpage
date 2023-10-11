@@ -49,10 +49,10 @@ class PostgresWriter():
             logger.error(ex, exc_info=True)
             print(ex)
 
-    def store(self, url: str) -> None:
+    def store(self, url: str, tags: str) -> None:
 
-        insert_command = f'''INSERT INTO {self.schema}.urls (time, url)
-         VALUES('{datetime.now(timezone.utc)}', '{url}');'''
+        insert_command = f'''INSERT INTO {self.schema}.urls (time, url, tags, processed)
+         VALUES('{datetime.now(timezone.utc)}', '{url}', '{tags}', 'false');'''
 
         try:
             logger.debug(f"store_record {insert_command}")

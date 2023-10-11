@@ -16,10 +16,12 @@ function listenForClicks() {
         browser.tabs.query({active: true, currentWindow: true})
             .then(tabs => {
                 let currentTab = tabs[0];
+                let tags = document.getElementById("tags").value;
                 console.log(currentTab.url);
                 browser.tabs.sendMessage(tabs[0].id, {
                     command: "sendurl",
-                    content: currentTab.url
+                    content: currentTab.url,
+                    tags: tags
                 });                
             })
             .catch(reportError);
@@ -34,11 +36,11 @@ function reportExecuteScriptError(error) {
   
 const inline = `
     (() => {
-        function sendurl(url) {
+        function sendurl(url, tags) {
             let xmlhttp = new XMLHttpRequest();
             xmlhttp.open("POST", "http://192.168.0.21");
             xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xmlhttp.send(JSON.stringify({"url_to_parse": url}));
+            xmlhttp.send(JSON.stringify({"url_to_parse": url, "tags": tags}));
         }    
 
         browser.runtime.onMessage.addListener((message) => {

@@ -15,7 +15,8 @@ def hello():
         logger.debug("2")
         with (PostgresWriter()) as pg:
             url = request.json['url_to_parse']
-            pg.store(url)
+            tags = request.json['tags']
+            pg.store(url, tags)
         return "<h1 style='color:blue'>Hello There POST!</h1>"
     else:
         logger.debug("3")
