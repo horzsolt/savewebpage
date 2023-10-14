@@ -1,3 +1,4 @@
 {
-    "url_to_parse": "http://www.index.hu"
+    "url_to_parse": "http%3A%2F%2Fwww.index.hu",
+    "tags": "sample, dummy"
 }

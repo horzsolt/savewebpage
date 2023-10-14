@@ -1,55 +1,88 @@
+"use strict";
+
 function listenForClicks() {
-    
+
+    var input = document.getElementById("sendurl_tags");
+
+    input.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById("send_btn").click();
+        }
+    });
+
     document.addEventListener("click", (e) => {
 
-        function _sendMessage(url) {
-            browser.tabs.sendMessage(tabs[0].id, {
-                command: "sendurl",
-                content: url
-            });            
+        function sendMessageToTabs(tabs) {
+            
+            let _tags = document.getElementById("sendurl_tags").value;
+            browser.tabs
+                .sendMessage(tabs[0].id, {
+                    command: "sendurl",
+                    content: tabs[0].url,
+                    tags: _tags,
+                 })
+                .then((response) => {
+                    browser.notifications.create("cakeNotification", {
+                        type: "basic",
+                        iconUrl: browser.runtime.getURL("icons/cake-96.png"),
+                        title: response.response,
+                        message: response.response,
+                    });
+                })
+                .catch(reportExecuteScriptError);
         }
 
         if (e.target.tagName !== "BUTTON" || !e.target.closest("#popup-content")) {
             return;
         }
 
-        browser.tabs.query({active: true, currentWindow: true})
-            .then(tabs => {
-                let currentTab = tabs[0];
-                let tags = document.getElementById("tags").value;
-                console.log(currentTab.url);
-                browser.tabs.sendMessage(tabs[0].id, {
-                    command: "sendurl",
-                    content: currentTab.url,
-                    tags: tags
-                });                
-            })
-            .catch(reportError);
+        browser.tabs
+            .query({currentWindow: true, active: true})
+            .then(sendMessageToTabs)
+            .catch(reportExecuteScriptError);
 
     });
 }
 
 function reportExecuteScriptError(error) {
+    console.log(error);
     console.error('Failed to execute script: ' + error.message);
-    console.trace();
 }
   
 const inline = `
     (() => {
-        function sendurl(url, tags) {
-            let xmlhttp = new XMLHttpRequest();
-            xmlhttp.open("POST", "http://192.168.0.21");
-            xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xmlhttp.send(JSON.stringify({"url_to_parse": url, "tags": tags}));
-        }    
+
+        if (window.hasRun) {
+            return;
+        }
+        window.hasRun = true;
+
+        function doPost(body) {
+            var xhr = new XMLHttpRequest;
+            var response = "error";
+
+            xhr.open("POST", "http://192.168.0.21", false);
+            xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+
+            xhr.send(body);
+            return xhr.responseText;
+        };
 
         browser.runtime.onMessage.addListener((message) => {
-        if (message.command === "sendurl") {
-            sendurl(message.content);
-        }
+            let result = "";
+            if (message.command === "sendurl") {
+                
+                let response = "";
+                let json = JSON.stringify({"url_to_parse": encodeURIComponent(message.content), "tags": message.tags});
+    
+                result = doPost(json);
+                return Promise.resolve({ response: result });
+            }
         });
     })();
 `;
+
 browser.tabs
     .executeScript({code: inline})
     .then(listenForClicks)
