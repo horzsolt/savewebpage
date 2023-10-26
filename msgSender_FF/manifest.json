@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "URL sender",
-    "version": "1.0",
+    "version": "1.2",
   
     "description": "Send the active tab's URL to a specified endpoint.",
     "icons": {

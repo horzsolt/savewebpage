@@ -16,11 +16,13 @@ function listenForClicks() {
         function sendMessageToTabs(tabs) {
             
             let _tags = document.getElementById("sendurl_tags").value;
+            let _url= document.getElementById("targeturl").value;
             browser.tabs
                 .sendMessage(tabs[0].id, {
                     command: "sendurl",
                     content: tabs[0].url,
                     tags: _tags,
+                    url: _url,
                  })
                 .then((response) => {
                     browser.notifications.create("cakeNotification", {
@@ -58,11 +60,11 @@ const inline = `
         }
         window.hasRun = true;
 
-        function doPost(body) {
+        function doPost(body, url) {
             var xhr = new XMLHttpRequest;
             var response = "error";
 
-            xhr.open("POST", "http://192.168.0.21", false);
+            xhr.open("POST", url, false);
             xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
 
             xhr.send(body);
@@ -75,8 +77,9 @@ const inline = `
                 
                 let response = "";
                 let json = JSON.stringify({"url_to_parse": encodeURIComponent(message.content), "tags": message.tags});
+                let url = message.url;
     
-                result = doPost(json);
+                result = doPost(json, url);
                 return Promise.resolve({ response: result });
             }
         });
