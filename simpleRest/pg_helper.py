@@ -4,8 +4,6 @@ import os
 from configparser import ConfigParser
 from datetime import datetime, timezone
 
-logger = logging.getLogger(__name__)
-
 class PostgresWriter():
 
     def __init__(self) -> None:
@@ -21,8 +19,8 @@ class PostgresWriter():
         self.schema = serverinfo["POSTGRES_SCHEMA"]
         self.conn = None
 
-        logger.debug(f"host {self.host}")
-        logger.debug(f"user {self.user}")
+        logging.debug(f"host {self.host}")
+        logging.debug(f"user {self.user}")
 
     def __enter__(self):
         self._connect()
@@ -36,7 +34,7 @@ class PostgresWriter():
             self.conn.close()
 
     def _connect(self) -> None:
-        logger.debug("connect to pg")
+        logging.debug("connect to pg")
         try:
             self.conn = psycopg2.connect(
                 host=self.host,
@@ -46,7 +44,7 @@ class PostgresWriter():
                 database=self.database
             )
         except Exception as ex:
-            logger.error(ex, exc_info=True)
+            logging.error(ex, exc_info=True)
             print(ex)
 
     def store(self, url: str, tags: str) -> None:
@@ -55,9 +53,9 @@ class PostgresWriter():
          VALUES('{datetime.now(timezone.utc)}', '{url}', '{tags}', 'false');'''
 
         try:
-            logger.debug(f"store_record {insert_command}")
+            logging.debug(f"store_record {insert_command}")
             cursor = self.conn.cursor()
             cursor.execute(insert_command)
             self.conn.commit()
         except Exception as ex:
-            logger.error(ex, exc_info=True)
+            logging.error(ex, exc_info=True)
