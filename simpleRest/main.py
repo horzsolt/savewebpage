@@ -4,6 +4,8 @@ import logging
 import urllib.parse
 from flask_apscheduler import APScheduler
 
+import html_to_pdf
+
 
 #https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-20-04
 #curl -X POST -H "Content-Type: application/json" -d @sample.json http://localhost
@@ -47,10 +49,10 @@ def hello():
         return "<h1 style='color:blue'>GET: 1011</h1>"
 
 
-@scheduler.task('cron', id='check_downloads_job', minute='*')
+#@scheduler.task('cron', id='check_downloads_job', minute='*')
 def check_downloads():
     with (PostgresHelper()) as pg:
-        [logging.debug(dlItem) for dlItem in pg.list_urls_to_download()]
+        [saveWebPageAsPdf(dlItem) for dlItem in pg.list_urls_to_download()]
 
 
 if __name__ == "__main__":
