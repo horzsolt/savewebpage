@@ -1,10 +1,13 @@
 import logging
+import typing
 import psycopg2
 import os
 from configparser import ConfigParser
 from datetime import datetime, timezone
 
-class PostgresWriter():
+from download_item import DownloadItem
+
+class PostgresHelper():
 
     def __init__(self) -> None:
 
@@ -46,6 +49,29 @@ class PostgresWriter():
         except Exception as ex:
             logging.error(ex, exc_info=True)
             print(ex)
+
+    def list_urls_to_download(self) -> typing.List[DownloadItem]:
+        '''
+        [(95,
+            'https://www.cybertec-postgresql.com/en/pg_resetwal-when-to-reset-the-wal-in-postgresql/',
+            'postgres, wal'),
+         (96,
+            'https://www.cybertec-postgresql.com/en/kill-long-running-queries-in-postgresql/',
+            'postgres, slowness')]
+        '''
+
+        select_command = f'SELECT id, url, tags FROM {self.schema}.urls WHERE processed = false'
+
+        try:
+            logging.debug(f"select {select_command}")
+            cursor = self.conn.cursor()
+            cursor.execute(select_command)
+
+            records = cursor.fetchall()
+            logging.debug(records)
+            return [DownloadItem(id, url, tags) for id, url, tags in records]
+        except Exception as ex:
+            logging.error(ex, exc_info=True)
 
     def store(self, url: str, tags: str) -> None:
 
