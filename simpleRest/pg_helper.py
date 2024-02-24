@@ -43,7 +43,7 @@ class PostgresHelper():
                 host=self.host,
                 user=self.user,
                 password=self.pwd,
-                port=49431,
+                port=2665,
                 database=self.database
             )
         except Exception as ex:

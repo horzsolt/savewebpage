@@ -52,7 +52,7 @@ def hello():
 #@scheduler.task('cron', id='check_downloads_job', minute='*')
 def check_downloads():
     with (PostgresHelper()) as pg:
-        [saveWebPageAsPdf(dlItem) for dlItem in pg.list_urls_to_download()]
+        [html_to_pdf.saveWebPageAsPdf(dlItem) for dlItem in pg.list_urls_to_download()]
 
 
 if __name__ == "__main__":
